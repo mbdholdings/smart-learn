@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% load embed_video_tags %}
+
+{% block title %} {{lessons.name}} {% endblock %}
+
+{% block content %}
+
+<!-- ==========Page Header Section Start Here========== -->
+<section class="page-header-section style-1">
+    <div class="container">
+        <div class="page-header-content">
+            <div class="page-header-inner">
+                <div class="page-title">
+                    <h2>Chapter-{{ lessons.position }}: {{ lessons.name }}</h2>
+                </div>
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'school:grade_list' %}">Classes</a></li>
+                    <li><a href="{% url 'school:subject_list' slug=lessons.Grade.slug %}">{{ lessons.grade.name }}</a>
+                    </li>
+                    <li><a href="{% url 'school:lesson_list' grade=lessons.Grade.slug slug=lessons.subject.slug %}">
+                        {{ lessons.subject.name }}</a></li>
+                    <li class="active">{{ lessons.name }} </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Page Header Section Ends Here========== -->
+                              
+<!-- ==========Blog Section start Here========== -->
+<section class="blog-section padding-top padding-bottom">
+    <div class="container">
+        <div class="main-blog">
+            <div class="row g-5">
+                <div class="col-xl-9 col-12">
+                    <div class="blog-wrapper">
+                        <div class="post-item">
+                            <div class="post-item-inner">
+                                <div class="post-thumb">
+                                    <div class="row d-flex justify-content-center mb-4">
+                                        <div id="player-overlay">                                  
+                                            {% if lessons.video %}
+                                                <video controls width="360" height="480">
+                                                    <source src="{{ lessons.video.url }}" type="video/mp4">
+                                                </video>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="post-content" align="center">
+                                    <span class="meta" style="color:#ffffff">Created By: {{ lessons.created_by|title }} | Posted {{ lessons.created_at|timesince }} Ago</span>
+                                    <hr>                                 
+                                    <h5 class="card-title">Download Presentations</h5>
+                                    {% if lessons.ppt %}
+                                    <p class="card-text">Download presentations from the lecture</p>
+                                    <a href="{{ lessons.ppt.url }}" download class="btn btn-primary btn-lg"
+                                        style="background-color:#00bcd4;">
+                                        <button type="button" class="button-les"><span>Get Files</span></button>
+                                    </a>
+                                    {% else %}
+                                    <p class="card-text"> No PPT available</p>
+                                    {% endif %}
+                                    <br><br>
+                                    <h5 class="card-title">Download Notes</h5>
+                                    {% if lessons.Notes %}
+                                    <p class="card-text">Download notes from the lecture</p>
+                                    <a href="{{lessons.Notes.url}}" download class="btn btn-primary btn-lg"
+                                        style="background-color:#00bcd4;">
+                                        <button type="button" class="button-les"><span>Get Files</span></button>
+                                    </a>
+                                    {% else %}
+                                    <p class="card-text">Notes not available</p>
+                                    {%endif%}
+
+                                    <h5 class="card-title">Download Video</h5>
+                                    <p class="card-text">Download Video from the lecture</p>
+                                    {% if lessons.video %}
+                                        <a href="{{ lessons.video.url }}" download class="btn btn-primary btn-lg"
+                                            style="background-color:#00bcd4;">
+                                            <button type="button" class="button-les"><span>Get Video</span></button>
+                                        </a>
+                                    {% else %}
+                                        <p class="card-text">Video not available</p>
+                                    {% endif %}
+
+                                    <br><br>
+                                    {% if user.userprofileinfo.user_type == 'teacher' or user.is_superuser %}
+                                    <div class="col-md-6 mb-3 text-center">
+                                        <a href="{% url 'school:lesson_update' grade=lessons.Grade.slug subject=lessons.subject.slug slug=lessons.slug %}"
+                                            class="btn btn-warning btn-lg mr-4 btn-block">Update Lesson</a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="{% url 'school:lesson_delete' grade=lessons.Grade.slug subject=lessons.subject.slug slug=lessons.slug %}"
+                                            class="btn btn-danger btn-lg mr-4 btn-block"> Delete Lesson </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="comments" class="comments">
+                            <div class="widget-title">
+                                <br>
+                                <span align="center">
+                                    <h5>Questions And Queries</h5>
+                                    <h3>Post your comment or question below:</h3>
+                                </span>
+                            </div>
+                           
+                                                
+                        <div class="container row">
+                            <div class="col-md-6">
+                                                    <form method="post">
+                                                        <div class="form-group">
+                                                        {% csrf_token %}
+                                                        {{form|crispy}}
+                                                        <input type="submit" name="form" value="Add Comment" class="btn btn-primary btn-sm">
+                                                        </div>
+                                                    </form>
+                    
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% for comment in lessons.comments.all %}
+                            <div class="col-md-8 mt-2 mb-2">
+                                            <div class="media border p-3">
+                                                <img src="{% static 'Images/user_avatar.png' %}" alt="John Doe" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+                                                <div class="media-body">
+                                                        <h4>{{comment.author}} <small><i>Posted on {{comment.date_added}}</i></small></h4>
+                                                        <p>{{comment.body}}</p>
+                                                {% for reply in comment.replies.all %}
+                                                            <div class="media p-3">
+                                                                    <img src="{% static 'Images/user_avatar.png' %}" alt="Jane Doe" class="mr-3 mt-3 rounded-circle" style="width:45px;">
+                                                            <div class="media-body">
+                                                                    <h5>{{reply.author}} <small><i>Posted on {{reply.date_added}}</i></small></h5>
+                                                                    <p>{{reply.reply_body}}</p>
+                                                                </div>
+                                                            </div>
+                                                {% endfor %}
+                                                <!-- form to post reply -->
+                                                <form method="post">
+                                                        <input type="hidden" name="comment.id" value="{{comment.id}}">
+                                                        <input type="hidden" name="comment.comm_name" value="{{comment.comm_name}}">
+                                                        {% csrf_token %}
+                                                        {{form2.as_p}}
+                                                        <input type="submit" name="form2" value="Add Reply" class="btn btn-warning btn-sm">
+                                                </form>
+                                                </div>
+                                        </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                       
+                        </div>
+
+                       
+                    </div>
+                </div>
+                <div class="col-xl-3 col-12">
+                    <aside>
+                        <div class="profile-widget search-widget">
+                            <div class="widget-inner">
+                                <div class="widget-title">
+                                    <h5>Search Post</h5>
+                                </div>
+                                <div class="widget-content">
+                                    <p>Search from the newest post collections</p>
+                                    <div class="form-floating nft-search-input">
+                                        <input type="text" class="form-control" id="nftSearch"
+                                            placeholder="Search post">
+                                        <label for="nftSearch">Search post</label>
+                                        <button type="button"> <i class="icofont-search-1"></i></button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget widget-category">
+                            <div class="widget-header">
+                                <h5 class="title">Post Category</h5>
+                            </div>
+                            <ul class="widget-wrapper">
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>Themeforest</span><span>06</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>Photodune</span><span>11</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex active flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>Codecanyon</span><span>07</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>GRaphicdriver</span><span>09</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>Wordpress</span><span>50</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>Joomla</span><span>20</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="d-flex flex-wrap justify-content-between"><span><i
+                                                class="icofont-double-right"></i>3docean</span><span>93</span></a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="widget widget-post">
+                            <div class="widget-header">
+                                <h5 class="title">Most Popular Post</h5>
+                            </div>
+                            <ul class="widget-wrapper">
+                                <li class="d-flex flex-wrap justify-content-between">
+                                    <div class="post-thumb">
+                                        <a href="blog-single.html"><img src="assets/images/blog/01.jpg"
+                                                alt="post-img"></a>
+                                    </div>
+                                    <div class="post-content">
+                                        <a href="blog-single.html">
+                                            <h6>Poor People’s Campaign Our Resources</h6>
+                                        </a>
+                                        <p>July 23,2021</p>
+                                    </div>
+                                </li>
+                                <li class="d-flex flex-wrap justify-content-between">
+                                    <div class="post-thumb">
+                                        <a href="blog-single.html"><img src="assets/images/blog/02.jpg"
+                                                alt="post-img"></a>
+                                    </div>
+                                    <div class="post-content">
+                                        <a href="blog-single.html">
+                                            <h6>Boosting Social For NGO And Charities </h6>
+                                        </a>
+                                        <p>July 23,2021</p>
+                                    </div>
+                                </li>
+                                <li class="d-flex flex-wrap justify-content-between">
+                                    <div class="post-thumb">
+                                        <a href="blog-single.html"><img src="assets/images/blog/03.jpg"
+                                                alt="post-img"></a>
+                                    </div>
+                                    <div class="post-content">
+                                        <a href="blog-single.html">
+                                            <h6>Poor People’s Campaign Our Resources</h6>
+                                        </a>
+                                        <p>July 23,2021</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="widget widget-tags">
+                            <div class="widget-header">
+                                <h5 class="title">Our Popular Tags</h5>
+                            </div>
+                            <ul class="widget-wrapper">
+                                <li><a href="#">envato</a></li>
+                                <li><a href="#" class="active">themeforest</a></li>
+                                <li><a href="#">codecanyon</a></li>
+                                <li><a href="#">videohive</a></li>
+                                <li><a href="#">audiojungle</a></li>
+                                <li><a href="#">3docean</a></li>
+                                <li><a href="#">envato</a></li>
+                                <li><a href="#">themeforest</a></li>
+                                <li><a href="#">codecanyon</a></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Blog Section ends Here========== -->
+
+{% endblock %}

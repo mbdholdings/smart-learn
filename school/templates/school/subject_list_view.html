@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Standards {% endblock %}
+
+
+{% block content %}
+    <!-- ==========Page Header Section Start Here========== -->
+    <section class="page-header-section style-1">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-inner">
+                    <div class="page-title">
+                        <h2>Choose A Subject From List</h2>
+                    </div>
+                    <ol class="breadcrumb">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        <li><a href="{% url 'school:grade_list' %}">Grades | Classes</a></li>
+                        <li><a href="{% url 'index' %}">Home</a></li>
+
+                        <li class="active">{{ grades.name }}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==========Page Header Section Ends Here========== -->
+
+
+    <!-- ==========Activity Section start Here========== -->
+    <section class="activity-section padding-top padding-bottom">
+        <div class="container">
+
+            <div class="section-wrapper">
+                <div class="row">
+                    <div class="col-xl-8">
+                        <div class="section-header">
+                            <h3>List Of Subjects</h3>
+                            <div class="nft-filter d-flex flex-wrap justify-content-center gap-15">
+                                <div class="form-floating">
+                                    
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-wrapper">
+                            <div class="row gy-3">
+                              {% for subject in grades.subjects.all %}
+                                <div class="col-12">
+                                    <div class="activity-item">
+                                        <div class="lab-inner d-flex flex-wrap align-items-center p-3 p-md-4">
+                                            <div class="lab-thumb me-3 me-md-4">
+                                                <img src="{{ subject.image.url|default_if_none:'#' }}" alt="img">
+                                            </div>
+                                            
+                                            <div class="lab-content">
+                                              <br>
+                                                <h4><a href="{% url 'school:lesson_list' slug=subject.slug grade=grades.slug %}">{{ subject.name }}</a>
+                                                </h4>
+
+                                                <p class="mb-2">
+                                                  {{ subject.description|truncatechars:75 }}
+                                                </p>
+
+                                                <a href="{% url 'school:lesson_list' slug=subject.slug grade=grades.slug %}" class="btn btn-primary" btn-sm
+                                                style="background-color:#00bcd4;">
+                                                <p><span><i data-blast="color"></i></span>
+                                                  Start Lessons
+                                                </p>
+                                            </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              {% endfor %}               
+                            </div>
+                            <div class="load-btn mt-5">
+                                <a href="#" class="default-btn move-bottom">
+                                    <span>Load More</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Aside Part -->
+                    <div class="col-xl-4">
+                        <aside class="mt-5 mt-xl-0">
+                            <div class="widget widget-tags">
+                                <div class="widget-header">
+                                    <h5 class="title">Your Time-Table</h5>
+                                </div>
+
+                                <ul class="widget-wrapper justify-content-start">
+                                    {% for slot in slots %}
+                                    <li><a href="#"><i class="icofont-ui-calendar"></i>  {{ slot.start_time }}</a></li>
+                                    {% endfor %}
+
+                                    <p>Monday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 1 %}
+                                    <li><a href="#" class="active"><i class="icofont-retweet"></i> {{ slot.slot_subject }} </a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <p>Tuesday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 2 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <p>Wednesday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 3 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <p>Thursday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 4 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <p>Friday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 5 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    
+                                    <p>Sartuday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 6 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <p>Sunday</p>
+                                    {%for slot in grades.grade_slots.all%}
+                                    {%if slot.day.id == 7 %}
+                                    <li><a href="#"><i class="icofont-retweet"></i> {{ slot.slot_subject }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}                             
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- ==========explore Section ends Here========== -->
+
+{%endblock%}

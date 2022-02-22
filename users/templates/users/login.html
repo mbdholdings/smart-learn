@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+    <!-- ==========Page Header Section Start Here========== -->
+    <section class="page-header-section style-1">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-inner">
+                    <div class="page-title">
+                        <h2>Login In Page </h2>
+                    </div>
+                    <ol class="breadcrumb">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        <li class="active">Login </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==========Page Header Section Ends Here========== -->
+
+
+    <!-- ==========login Section start Here========== -->
+    <div class="login-section padding-top padding-bottom">
+        <div class=" container">
+            <div class="row g-5 align-items-center flex-md-row-reverse">
+                <div class="col-lg-5">
+                    <div class="account-wrapper">
+                        <h3 class="title">Login</h3>
+
+
+                        <form action="{% url 'user_login' %}" method="post">
+                            <div class="form-group">
+          
+          
+                            {% csrf_token %}
+                            <div class="col-md-12">
+                              <div class="row">
+          
+          
+                            <label for="username">Username:</label>
+                            <input type="text" name="username" placeholder="Username" class="form-control">
+          
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" class="form-control">
+                            </div>
+                            <div class="row justify-content-center">
+                                <input type="submit" value="Login" class="btn btn-success btn-lg mt-3">
+                            </div>
+                            </div>
+                            </div>
+                          </form>
+
+
+                        <div class="account-bottom">
+                            <span class="d-block cate pt-10">
+                              Don’t Have any Account? <a href="{% url 'register' %}" class="btn btn-primary"
+                              style="background-color:#00bcd4;">  Register</a>
+                            </span>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="account-img">
+                        <img src="{% static 'assets/images/account/01.png' %}" alt="shape-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ==========Login Section ends Here========== -->
+
+{%endblock%}
